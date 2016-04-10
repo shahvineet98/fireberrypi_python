@@ -22,33 +22,64 @@ carrier = data['carrier']
 #email_password = data['test2']['email_password']
 name = data['name']
 phone_number = str(data['phone_number'])
+pi_lat = str(data['latitude'])
+pi_long = str(data['longitude'])
+
+firebase_location_url = 'https://fireberrylocation.firebaseio.com/.json'
+r1 = requests.get(firebase_location_url)
+data1 = json.loads(r1.text)
+phone_lat = str(data1['latitude'])
+phone_long = str(data1['longitude'])
+
+peopleExist = False
+
+def determine_people():
+	if(pi_lat == phone_lat and pi_long == phone_long):
+		peopleExist = True
+	else:
+		peopleExist = False
+	return peopleExist
 
 def determine_carrier_email():
-        email_to_send = ''
+	email_to_send = ''
 
-        if carrier == 'att':
-                email_to_send = phone_number + '@mms.att.net'
-        elif carrier == 'sprint':
-                email_to_send = phone_number + '@messaging.sprintpcs.com'
-        elif carrier == 'tmobile':
-                email_to_send = phone_number + '@tmomail.net'
-        elif carrier == 'verizon':
-                email_to_send = phone_number + '@vtext.com'
-        else:
-                print("please select a valid carrier")
+	if carrier == 'att':
+		email_to_send = phone_number + '@mms.att.net'
+	elif carrier == 'sprint':
+		email_to_send = phone_number + '@messaging.sprintpcs.com'
+	elif carrier == 'tmobile':
+		email_to_send = phone_number + '@tmomail.net'
+	elif carrier == 'verizon':
+		email_to_send = phone_number + '@vtext.com'
+	else:
+		print("please select a valid carrier")
 
-        return email_to_send
+	return email_to_send
 def SendSpMail(ImgFileName):
-        sendEmail = determine_carrier_email()
-        response = sp.transmissions.send(
-                recipients=[sendEmail],
-                from_email='mail@mail.shahv98.me',
-                subject='Gas Alert',
-		text=name+', an abnormal amount of gas has been identified',
-                track_opens=True,
-                track_clicks=True,
-                attachments=[{"name":"capture.jpg","type":"image/jpeg","filename":ImgFileName}]
-        )
+	sendEmail = determine_carrier_email()
+	people = determine_people()
+	
+	if(people == True):
+		response = sp.transmissions.send(
+			recipients=[sendEmail],
+			from_email='mail@mail.shahv98.me',
+			subject='Gas Alert',
+			text=name+', an abnormal amount of gas has been identified. According to the registered phones location, there is 1 person near the FireBerryPi',
+			track_opens=True,
+			track_clicks=True,
+			attachments=[{"name":"capture.jpg","type":"image/jpeg","filename":ImgFileName}]
+		)
+	else:
+		 response = sp.transmissions.send(
+			recipients=[sendEmail],
+			from_email='mail@mail.shahv98.me',
+			subject='Gas Alert',
+			text=name+', an abnormal amount of gas has been identified. According to the registered phones location, there are no known people near the FireBerryPi',
+			track_opens=True,
+			track_clicks=True,
+			attachments=[{"name":"capture.jpg","type":"image/jpeg","filename":ImgFileName}]
+		)
+
 
 #function that will parse json and send to the right place
 def SendMail(ImgFileName):
@@ -95,14 +126,14 @@ except:
 a.pinMode(sensor, a.INPUT)
 
 while True:
-        val = a.analogRead(sensor)
-        print(val)
-        sleep(0.1)
-        if val > 400:
-            camera.capture('image.jpg')
-            sleep(0.1)
-            SendSpMail('image.jpg')
-            #SendMail('image.jpg')
+	val = a.analogRead(sensor)
+	print(val)
+	sleep(0.1)
+	if val > 400:
+	    camera.capture('image.jpg')
+	    sleep(0.1)
+	    SendSpMail('image.jpg')
+	    #SendMail('image.jpg')
 ##            server.sendmail('vulcanlgr@gmail.com', '2404222267@mms.att.net', 'FIREEEEEE!')
 
 
