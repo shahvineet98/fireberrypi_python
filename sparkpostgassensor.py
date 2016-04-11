@@ -1,3 +1,4 @@
+# import necessary libraries
 import os
 import smtplib
 import picamera
@@ -10,21 +11,22 @@ from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from nanpy import (ArduinoApi, SerialManager)
 from time import sleep
-
-#Get Firebase json data here
+# get text message json data here
 firebase_url = 'https://fireberrypi.firebaseio.com/.json'
 r = requests.get(firebase_url)
 data = json.loads(r.text)
 sp = SparkPost('816861acefe647bab3df3c272fd798d0647040dd')
-
 carrier = data['carrier']
-#email = data['test2']['email']
-#email_password = data['test2']['email_password']
+# email = data['test2']['email']
+# email_password = data['test2']['email_password']
 name = data['name']
 phone_number = str(data['phone_number'])
-pi_lat = str(data['latitude'])
-pi_long = str(data['longitude'])
+pi_lat = str(39.244881)
+pi_long = str(-77.266147)
+# pi_lat = str(data['latitude'])
+# pi_long = str(data['longitude'])
 
+# get android phone location here
 firebase_location_url = 'https://fireberrylocation.firebaseio.com/.json'
 r1 = requests.get(firebase_location_url)
 data1 = json.loads(r1.text)
@@ -34,7 +36,9 @@ phone_long = str(data1['longitude'])
 peopleExist = False
 
 def determine_people():
-	if(pi_lat == phone_lat and pi_long == phone_long):
+	print (pi_lat, phone_lat)
+	print (pi_long, phone_long)
+	if float(phone_lat) > 39 and float(phone_long) < -77:
 		peopleExist = True
 	else:
 		peopleExist = False
@@ -129,7 +133,7 @@ while True:
 	val = a.analogRead(sensor)
 	print(val)
 	sleep(0.1)
-	if val > 400:
+	if val > 200:
 	    camera.capture('image.jpg')
 	    sleep(0.1)
 	    SendSpMail('image.jpg')
