@@ -90,8 +90,6 @@ def SendMail(ImgFileName):
     img_data = open(ImgFileName, 'rb').read()
     msg = MIMEMultipart()
     msg['Subject'] = 'Gas Alert'
-   # msg['From'] = 'vulcanlgr@gmail.com'
-   # msg['To'] = '2404222267@mms.att.net'
 
     text = MIMEText(name + ", Abnormal Gas Levels were detected. Here is an image from the sensor below: ")
     msg.attach(text)
@@ -108,14 +106,8 @@ def SendMail(ImgFileName):
     print(address_to_send)
     s.sendmail(email, address_to_send, msg.as_string())
 
-   # s.login('vulcanlgr@gmail.com', 'vgy78uhb')
-   # s.sendmail('vulcanlgr@gmail.com','2404222267@mms.att.net', msg.as_string())
     s.quit()
 
-
-##server = smtplib.SMTP("smtp.gmail.com", 587)
-##server.starttls()
-##server.login('vulcanlgr@gmail.com', 'vgy78uhb')
 
 camera = picamera.PiCamera()
 
@@ -137,8 +129,6 @@ while True:
 	    camera.capture('image.jpg')
 	    sleep(0.1)
 	    SendSpMail('image.jpg')
-	    #SendMail('image.jpg')
-##            server.sendmail('vulcanlgr@gmail.com', '2404222267@mms.att.net', 'FIREEEEEE!')
 
 
 
