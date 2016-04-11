@@ -6,4 +6,4 @@ Install nanpy
 Setup nanpy-firmware and upload to arduino board
 
 To execute this file: 
-$python3 gas sensor.py
+$python3 sparkpostgassensor.py
