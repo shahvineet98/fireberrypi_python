@@ -15,7 +15,7 @@ from time import sleep
 firebase_url = 'https://fireberrypi.firebaseio.com/.json'
 r = requests.get(firebase_url)
 data = json.loads(r.text)
-sp = SparkPost('816861acefe647bab3df3c272fd798d0647040dd')
+sp = SparkPost(API_KEY)  #Insert your API Key in ' ' here 
 carrier = data['carrier']
 # email = data['test2']['email']
 # email_password = data['test2']['email_password']
